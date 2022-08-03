@@ -84,15 +84,15 @@ class MirrorListener:
             with download_dict_lock:
                 download_dict[self.uid] = ZipStatus(name, size, gid, self, self.message)
             if self.pswd is not None:
-                if self.isLeech and int(size) > TG_SPLIT_SIZE:
+                if self.isLeech and int(size) > MAX_LEECH_SIZE:
                     LOGGER.info(f'Zip: orig_path: {m_path}, zip_path: {path}.0*')
-                    self.suproc = Popen(["7z", f"-v{TG_SPLIT_SIZE}b", "a", "-mx=0", f"-p{self.pswd}", path, m_path])
+                    self.suproc = Popen(["7z", f"-v{MAX_LEECH_SIZE}b", "a", "-mx=0", f"-p{self.pswd}", path, m_path])
                 else:
                     LOGGER.info(f'Zip: orig_path: {m_path}, zip_path: {path}')
                     self.suproc = Popen(["7z", "a", "-mx=0", f"-p{self.pswd}", path, m_path])
-            elif self.isLeech and int(size) > TG_SPLIT_SIZE:
+            elif self.isLeech and int(size) > MAX_LEECH_SIZE:
                 LOGGER.info(f'Zip: orig_path: {m_path}, zip_path: {path}.0*')
-                self.suproc = Popen(["7z", f"-v{TG_SPLIT_SIZE}b", "a", "-mx=0", path, m_path])
+                self.suproc = Popen(["7z", f"-v{MAX_LEECH_SIZE}b", "a", "-mx=0", path, m_path])
             else:
                 LOGGER.info(f'Zip: orig_path: {m_path}, zip_path: {path}')
                 self.suproc = Popen(["7z", "a", "-mx=0", path, m_path])
@@ -162,14 +162,14 @@ class MirrorListener:
                 for file_ in files:
                     f_path = ospath.join(dirpath, file_)
                     f_size = ospath.getsize(f_path)
-                    if int(f_size) > TG_SPLIT_SIZE:
+                    if int(f_size) > MAX_LEECH_SIZE:
                         if not checked:
                             checked = True
                             with download_dict_lock:
                                 download_dict[self.uid] = SplitStatus(up_name, size, gid, self, self.message)
                             LOGGER.info(f"Splitting: {up_name}")
                         if res := split_file(
-                            f_path, f_size, file_, dirpath, TG_SPLIT_SIZE, self
+                            f_path, f_size, file_, dirpath, MAX_LEECH_SIZE, self
                         ):
                             osremove(f_path)
                         else:
