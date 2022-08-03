@@ -337,17 +337,6 @@ class MirrorListener:
 def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=False, pswd=None, multi=0, select=False, seed=False):
     buttons = ButtonMaker()
 
-    if FSUB:
-        try:
-            uname = message.from_user.mention_html(message.from_user.first_name)
-            user = bot.get_chat_member(FSUB_CHANNEL_ID, message.from_user.id)
-            if user.status not in ['member', 'creator', 'administrator']:
-                buttons.buildbutton( f"{TITLE_NAME}", f"https://t.me/{CHANNEL_USERNAME}")
-                reply_markup = InlineKeyboardMarkup(buttons.build_menu(1))
-                return sendMarkup(f"<b>Dear {uname}️,\n\nI found that you haven't joined our Updates Channel yet.\n\nJoin and Use Bots Without Restrictions.</b>", bot, message, reply_markup)
-        except Exception as e:
-            LOGGER.info(str(e))
-
     if BOT_PM and message.chat.type != 'private':
         try:
             msg1 = f'Added your Requested link to Download !\nWill send here once done.'
@@ -370,12 +359,6 @@ def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=Fals
     name_args = mesg[0].split('|', maxsplit=1)
     index = 1
     is_gdtot = False
-
-    if AUTO_MUTE:
-        try:
-            bot.restrict_chat_member(chat_id=message.chat.id, user_id=message.from_user.id, until_date=int(time()) + 30, permissions=ChatPermissions(can_send_messages=False))
-        except Exception as e:
-            print(f'[MuteUser] Error: {type(e)} {e}')
 
     if len(message_args) > 1:
         args = mesg[0].split(maxsplit=3)
